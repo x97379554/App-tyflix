@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLAYER = "player";
     private LinearLayout loginLayout;
     private Button button_back;
+
     private static final String PREFS_NAME = "lvaz424@gmail.com";
     private static final String KEY_LAST_URL = "lastUrl";
 
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
     private boolean isFullScreen = false;
+
+    //Button de emergência
+    private Button emergencyButton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         loginLayout = findViewById(R.id.loginLayout);
         button_back = findViewById(R.id.button_back);
         fullScreenContainer = findViewById(R.id.frameLayout);
+        emergencyButton = findViewById(R.id.button_SOS);
 
         initializeWebView();
         button_back.setOnClickListener(v -> webView.loadUrl(urldosite));
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 if (url.equals(urldologin)) {
                     button_back.setVisibility(View.GONE);
                     loginLayout.setVisibility(View.VISIBLE);
+                    emergencyButton.setVisibility(View.GONE);
                 } else {
                     loginLayout.setVisibility(View.GONE);
                     button_back.setVisibility(View.VISIBLE);
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (url.contains(PLAYER)) {
                     button_back.setVisibility(View.GONE);
+                    emergencyButton.setVisibility(View.VISIBLE);
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     if (!isFullScreen) {
                         setFullScreen();
@@ -200,6 +207,16 @@ public class MainActivity extends AppCompatActivity {
         ClipData clip = ClipData.newPlainText("copiedText", text);
         clipboard.setPrimaryClip(clip);
     }
+
+    //Botão de emergênciaSe não tiver na tela cheia
+    // Eu quero te ver esse botão Esse botão ele vai servir para voltar para a tela inicial do site quer dizer
+    public void emergencyButton(View view) {
+
+        if (!isFullScreen) {
+            webView.loadUrl(urldosite);
+        }
+    }
+
 }
 
 
