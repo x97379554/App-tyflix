@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,21 +13,16 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-
-
-import android.content.pm.ActivityInfo;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout loginLayout;
     private Button button_back;
 
-    private static final String PREFS_NAME = "lvaz424@gmail.com";
-    private static final String KEY_LAST_URL = "lastUrl";
+    private static final String PREFS_NAME = "LVAZ424@GMAIL.COM";
+    private static final String KEY_LAST_URL = "898989";
 
     private FrameLayout fullScreenContainer;
     private View customView;
@@ -104,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     loginLayout.setVisibility(View.GONE);
                     button_back.setVisibility(View.VISIBLE);
+                    emergencyButton.setVisibility(View.GONE);
+
+
+
                 }
 
                 if (url.contains(PLAYER)) {
@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                         setFullScreen();
                     }
                 } else {
+                    button_back.setVisibility(View.GONE);
+                    emergencyButton.setVisibility(View.GONE);
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     if (isFullScreen) {
                         exitFullScreen();

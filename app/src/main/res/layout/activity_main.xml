@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="WAYNNECORP1@GMAIL.COM"
+                android:text="CACAUPIMENTA@GMAIL.COM"
                 android:textColor="@color/azulclaro" />
 
             <Button
@@ -101,7 +101,7 @@
         android:textColor="@color/azulclaro"
         android:backgroundTint="@color/black"
         android:layout_marginEnd="500dp"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="57dp"
         android:onClick="emergencyButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
