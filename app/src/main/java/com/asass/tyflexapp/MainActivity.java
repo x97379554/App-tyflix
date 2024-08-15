@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout loginLayout;
     private Button button_back;
 
-    private static final String PREFS_NAME = "LVAZ424@GMAIL.COM";
-    private static final String KEY_LAST_URL = "898989";
+    private static final String PREFS_NAME = "MJ2620775@GMAIL.COM";
+    private static final String KEY_LAST_URL = "100000";
 
     private FrameLayout fullScreenContainer;
     private View customView;
