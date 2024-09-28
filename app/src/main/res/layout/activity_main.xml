@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="MJ2620775@GMAIL.COM"
+                android:text="@string/email"
                 android:textColor="@color/azulclaro" />
 
             <Button
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="100000"
+                android:text="@string/pass"
                 android:textColor="@color/azulclaro" />
 
             <Button

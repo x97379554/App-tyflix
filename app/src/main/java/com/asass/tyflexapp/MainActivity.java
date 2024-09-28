@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button_back;
 
     private static final String PREFS_NAME = "MJ2620775@GMAIL.COM";
-    private static final String KEY_LAST_URL = "100000";
+    private static final String KEY_LAST_URL = "1010aa";
 
     private FrameLayout fullScreenContainer;
     private View customView;
@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         button_back = findViewById(R.id.button_back);
         fullScreenContainer = findViewById(R.id.frameLayout);
         emergencyButton = findViewById(R.id.button_SOS);
+
+        emergencyButton.setVisibility(View.GONE);
 
         initializeWebView();
         button_back.setOnClickListener(v -> webView.loadUrl(urldosite));
