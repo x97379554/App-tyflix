@@ -28,8 +28,8 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
-    private String urldologin = "https://amofunny.com/login/";
-    private String urldosite = "https://amofunny.com/";
+    private final String urldologin = "https://amofunny.com/login/";
+    private final String urldosite = "https://amofunny.com/";
     private static final String PLAYER = "player";
     private LinearLayout loginLayout;
     private Button button_back;

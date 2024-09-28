@@ -94,13 +94,13 @@
     <!--Colocar o botão no canto no interior esquerdo -->
     <Button
         android:id="@+id/button_SOS"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="32dp"
         android:backgroundTint="@color/black"
         android:onClick="emergencyButton"
-        android:text="S.O.S"
+        android:text="SOS"
         android:textColor="@color/azulclaro"
         app:layout_constraintEnd_toEndOf="@+id/loginLayout"
         app:layout_constraintStart_toStartOf="@+id/loginLayout"
