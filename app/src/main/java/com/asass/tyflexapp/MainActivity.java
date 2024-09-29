@@ -24,25 +24,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
-    private final String urldologin = "https://amofunny.com/login/";
-    private final String urldosite = "https://amofunny.com/";
-    private static final String PLAYER = "player";
-    private LinearLayout loginLayout;
-    private Button button_back;
-
+    private static final String URL_LOGIN = "https://amofunny.com/login/";
+    private static final String URL_SITE = "https://amofunny.com/";
     private static final String PREFS_NAME = "MJ2620775@GMAIL.COM";
     private static final String KEY_LAST_URL = "1010aa";
 
+    private LinearLayout loginLayout;
+    private Button buttonBack;
     private FrameLayout fullScreenContainer;
     private View customView;
     private WebChromeClient.CustomViewCallback customViewCallback;
     private boolean isFullScreen = false;
-
-    //Button de emergência
     private Button emergencyButton;
 
     @SuppressLint("MissingInflatedId")
@@ -50,31 +45,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            v.setPadding(insets.getInsets(WindowInsetsCompat.Type.systemBars()).left, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top, insets.getInsets(WindowInsetsCompat.Type.systemBars()).right, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
-            return insets;
-        });
+        setupWindowInsets();
 
-        // Inicializa o WebView
         webView = findViewById(R.id.webV);
         loginLayout = findViewById(R.id.loginLayout);
-        button_back = findViewById(R.id.button_back);
+        buttonBack = findViewById(R.id.button_back);
         fullScreenContainer = findViewById(R.id.frameLayout);
         emergencyButton = findViewById(R.id.button_SOS);
 
         emergencyButton.setVisibility(View.GONE);
-
         initializeWebView();
-        button_back.setOnClickListener(v -> webView.loadUrl(urldosite));
+
+        buttonBack.setOnClickListener(v -> webView.loadUrl(URL_SITE));
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String lastUrl = preferences.getString(KEY_LAST_URL, urldologin);
-
+        String lastUrl = preferences.getString(KEY_LAST_URL, URL_LOGIN);
         if (savedInstanceState != null) {
             webView.restoreState(savedInstanceState);
         } else {
             webView.loadUrl(lastUrl);
         }
+    }
+
+    private void setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            v.setPadding(insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
+            return insets;
+        });
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -85,87 +85,79 @@ public class MainActivity extends AppCompatActivity {
         webViewSettings.setUseWideViewPort(true);
         webViewSettings.setLoadWithOverviewMode(true);
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                webView.loadData("Erro ao carregar a página. Verifique sua conexão.", "text/html", "UTF-8");
-            }
+        webView.setWebViewClient(new CustomWebViewClient());
+        webView.setWebChromeClient(new CustomWebChromeClient());
+    }
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+    private class CustomWebViewClient extends WebViewClient {
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            webView.loadData("Erro ao carregar a página. Verifique sua conexão.", "text/html", "UTF-8");
+        }
 
-                if (url.equals(urldologin)) {
-                    button_back.setVisibility(View.GONE);
-                    loginLayout.setVisibility(View.VISIBLE);
-                    emergencyButton.setVisibility(View.GONE);
-                } else {
-                    loginLayout.setVisibility(View.GONE);
-                    button_back.setVisibility(View.VISIBLE);
-                    emergencyButton.setVisibility(View.GONE);
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            updateUIBasedOnUrl(url);
+            saveLastUrl(url);
+        }
+    }
 
+    private void updateUIBasedOnUrl(String url) {
+        if (url.equals(URL_LOGIN)) {
+            buttonBack.setVisibility(View.GONE);
+            loginLayout.setVisibility(View.VISIBLE);
+            emergencyButton.setVisibility(View.GONE);
+        } else {
+            loginLayout.setVisibility(View.GONE);
+            buttonBack.setVisibility(View.VISIBLE);
+            emergencyButton.setVisibility(url.contains("player") ? View.VISIBLE : View.GONE);
+            buttonBack.setVisibility(url.contains("player") ? View.GONE : View.VISIBLE);
 
-
-                }
-
-                if (url.contains(PLAYER)) {
-                    button_back.setVisibility(View.GONE);
-                    emergencyButton.setVisibility(View.VISIBLE);
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    if (!isFullScreen) {
-                        setFullScreen();
-                    }
-                } else {
-                    button_back.setVisibility(View.GONE);
-                    emergencyButton.setVisibility(View.GONE);
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                    if (isFullScreen) {
-                        exitFullScreen();
-                    }
-                }
-
-                // Salva a URL atual no SharedPreferences
-                SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(KEY_LAST_URL, url);
-                editor.apply();
-            }
-        });
-
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onShowCustomView(View view, CustomViewCallback callback) {
-                if (customView != null) {
-                    callback.onCustomViewHidden();
-                    return;
-                }
-
-                // Entrando no modo tela cheia
-                customView = view;
-                customViewCallback = callback;
-                fullScreenContainer.addView(view);
-                fullScreenContainer.setVisibility(View.VISIBLE);
-                webView.setVisibility(View.GONE);
-                setFullScreen();
-                isFullScreen = true;
-            }
-
-            @Override
-            public void onHideCustomView() {
-                if (customView == null) {
-                    return;
-                }
-
-                // Saindo do modo tela cheia
-                fullScreenContainer.removeView(customView);
-                fullScreenContainer.setVisibility(View.GONE);
-                customView = null;
-                customViewCallback.onCustomViewHidden();
-                webView.setVisibility(View.VISIBLE);
+            if (url.contains("player")) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                enterFullScreen();
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 exitFullScreen();
-                isFullScreen = false;
             }
-        });
+        }
+    }
+
+    private void saveLastUrl(String url) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(KEY_LAST_URL, url);
+        editor.apply();
+    }
+
+    private class CustomWebChromeClient extends WebChromeClient {
+        @Override
+        public void onShowCustomView(View view, CustomViewCallback callback) {
+            if (customView != null) {
+                callback.onCustomViewHidden();
+                return;
+            }
+            customView = view;
+            customViewCallback = callback;
+            fullScreenContainer.addView(view);
+            fullScreenContainer.setVisibility(View.VISIBLE);
+            webView.setVisibility(View.GONE);
+            enterFullScreen();
+            isFullScreen = true;
+        }
+
+        @Override
+        public void onHideCustomView() {
+            if (customView == null) return;
+            fullScreenContainer.removeView(customView);
+            fullScreenContainer.setVisibility(View.GONE);
+            customView = null;
+            customViewCallback.onCustomViewHidden();
+            webView.setVisibility(View.VISIBLE);
+            exitFullScreen();
+            isFullScreen = false;
+        }
     }
 
     @Override
@@ -180,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         webView.restoreState(savedInstanceState);
     }
 
-    private void setFullScreen() {
+    private void enterFullScreen() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
     }
@@ -190,41 +182,23 @@ public class MainActivity extends AppCompatActivity {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
-    // Métodos para copiar o e-mail e senha
     public void copyEmail(View view) {
-        TextView emailText = findViewById(R.id.emailTextView);
-        String email = emailText.getText().toString().replace("E-mail: ", "");
-        copyToClipboard(email);
-        Toast.makeText(this, "E-mail copiado", Toast.LENGTH_SHORT).show();
+        copyToClipboard(((TextView) findViewById(R.id.emailTextView)).getText().toString().replace("E-mail: ", ""), "E-mail copiado");
     }
 
     public void copyPassword(View view) {
-        TextView passwordText = findViewById(R.id.senhaTextView);
-        String password = passwordText.getText().toString().replace("Senha: ", "");
-        copyToClipboard(password);
-        Toast.makeText(this, "Senha copiada", Toast.LENGTH_SHORT).show();
+        copyToClipboard(((TextView) findViewById(R.id.senhaTextView)).getText().toString().replace("Senha: ", ""), "Senha copiada");
     }
 
-    // Método auxiliar para copiar texto para a área de transferência
-    private void copyToClipboard(String text) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+    private void copyToClipboard(String text, String toastMessage) {
         ClipData clip = ClipData.newPlainText("copiedText", text);
-        clipboard.setPrimaryClip(clip);
+        ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(clip);
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
     }
 
-    //Botão de emergênciaSe não tiver na tela cheia
-    // Eu quero te ver esse botão Esse botão ele vai servir para voltar para a tela inicial do site quer dizer
     public void emergencyButton(View view) {
-
         if (!isFullScreen) {
-            webView.loadUrl(urldosite);
+            webView.loadUrl(URL_SITE);
         }
     }
-
 }
-
-
-
-
-
-
