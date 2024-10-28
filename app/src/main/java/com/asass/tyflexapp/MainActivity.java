@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private static final String URL_LOGIN = "https://amofunny.com/login/";
     private static final String URL_SITE = "https://amofunny.com/";
-    private static final String PREFS_NAME = "MJ2620775@GMAIL.COM";
+    private static final String PREFS_NAME = "CACAUPIMENTA@GMAIL.COM";
     private static final String KEY_LAST_URL = "1010aa";
 
     private LinearLayout loginLayout;
